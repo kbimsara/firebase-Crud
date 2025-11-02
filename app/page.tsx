@@ -1,7 +1,16 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Trash2, Edit2, Check, X } from "lucide-react";
-import { addDoc, collection, getDocs, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  deleteDoc,
+  doc,
+  updateDoc,
+  query,
+  orderBy,
+} from "firebase/firestore";
 import { db } from "@/firebase/firebase.config";
 
 export default function Home() {
@@ -13,7 +22,8 @@ export default function Home() {
   // Fetch todos from Firestore
   const fetchTodos = async () => {
     try {
-      const querySnapshot = await getDocs(collection(db, "todos"));
+      const q = query(collection(db, "todos"), orderBy("createdAt", "desc"));
+      const querySnapshot = await getDocs(q);
       const todoList = querySnapshot.docs.map((d) => ({
         id: d.id,
         ...d.data(),
@@ -24,19 +34,24 @@ export default function Home() {
     }
   };
 
+  // Only run once on mount
   useEffect(() => {
     fetchTodos();
-  }, [todos]); // Run once on mount
+  }, []);
 
   // Add new todo
   const addTodo = async () => {
     if (inputValue.trim() === "") return;
-    const newTodo = { text: inputValue, completed: false, createdAt: new Date() };
+    const newTodo = {
+      text: inputValue,
+      completed: false,
+      createdAt: new Date(),
+    };
 
     try {
       await addDoc(collection(db, "todos"), newTodo);
       setInputValue("");
-      fetchTodos(); // Refresh list
+      fetchTodos();
     } catch (error) {
       console.error("Error adding todo:", error);
     }
@@ -52,15 +67,14 @@ export default function Home() {
     }
   };
 
-  // Toggle complete (local only for now)
-  const toggleComplete = async (id) => {
-    // setTodos((prev) =>
-    //   prev.map((t) =>
-    //     t.id === id ? { ...t, completed: !t.completed } : t
-    //   )
-    // );
-
-    await updateDoc(doc(db, "todos", id), { completed: true });
+  // Toggle complete
+  const toggleComplete = async (id, currentValue) => {
+    try {
+      await updateDoc(doc(db, "todos", id), { completed: !currentValue });
+      fetchTodos();
+    } catch (error) {
+      console.error("Error toggling todo:", error);
+    }
   };
 
   // Start editing
@@ -69,16 +83,17 @@ export default function Home() {
     setEditValue(text);
   };
 
-  // Save edited todo (local only — can be extended to Firestore)
+  // Save edited todo
   const saveEdit = async (id) => {
     if (editValue.trim() === "") return;
-    // setTodos((prev) =>
-    //   prev.map((t) => (t.id === id ? { ...t, text: editValue } : t))
-    // );
-    
-    await updateDoc(doc(db, "todos", id), { text: editValue });
-    setEditingId(null);
-    setEditValue("");
+    try {
+      await updateDoc(doc(db, "todos", id), { text: editValue });
+      setEditingId(null);
+      setEditValue("");
+      fetchTodos();
+    } catch (error) {
+      console.error("Error saving edit:", error);
+    }
   };
 
   const cancelEdit = () => {
@@ -125,22 +140,24 @@ export default function Home() {
         {/* Todo List */}
         <div className="space-y-3">
           {todos.length === 0 ? (
-            <p className="text-center text-gray-400 py-8">No todos yet. Add one above!</p>
+            <p className="text-center text-gray-400 py-8">
+              No todos yet. Add one above!
+            </p>
           ) : (
             todos.map((todo) => (
               <div
                 key={todo.id}
-                className={`flex items-center gap-3 p-4 rounded-lg border ${
-                  todo.completed ? "bg-gray-700 border-gray-600" : "bg-gray-700 border-gray-500"
-                }`}
+                className={`flex items-center gap-3 p-4 rounded-lg border ${todo.completed
+                    ? "bg-gray-700 border-gray-600"
+                    : "bg-gray-700 border-gray-500"
+                  }`}
               >
                 <button
-                  onClick={() => toggleComplete(todo.id)}
-                  className={`flex-shrink-0 w-6 h-6 rounded border-2 flex items-center justify-center transition-colors ${
-                    todo.completed
+                  onClick={() => toggleComplete(todo.id, todo.completed)}
+                  className={`flex-shrink-0 w-6 h-6 rounded border-2 flex items-center justify-center transition-colors ${todo.completed
                       ? "bg-green-600 border-green-600"
                       : "border-gray-400 hover:border-green-500"
-                  }`}
+                    }`}
                 >
                   {todo.completed && <Check size={16} />}
                 </button>
@@ -156,9 +173,8 @@ export default function Home() {
                   />
                 ) : (
                   <span
-                    className={`flex-1 ${
-                      todo.completed ? "line-through text-gray-400" : ""
-                    }`}
+                    className={`flex-1 ${todo.completed ? "line-through text-gray-400" : ""
+                      }`}
                   >
                     {todo.text}
                   </span>
