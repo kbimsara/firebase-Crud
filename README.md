@@ -23,7 +23,7 @@ This is a simple yet powerful Todo application built with Next.js, Firebase, and
 ##  live version
 
 You can check out the live version of this app right here:
-Vercel Host URL: https://firebase-crud-l55lejlx6-kbimsara66s-projects.vercel.app/
+Vercel Host URL: https://firebase-crud-olive.vercel.app/
 
 ## 🤝 Contributing
 
