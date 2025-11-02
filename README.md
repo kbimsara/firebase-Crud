@@ -20,6 +20,55 @@ This is a simple yet powerful Todo application built with Next.js, Firebase, and
 - **[TypeScript](https://www.typescriptlang.org/):** A typed superset of JavaScript that compiles to plain JavaScript.
 - **[Lucide React](https://lucide.dev/):** A beautiful and consistent icon toolkit.
 
+## 🏁 Getting Started
+
+Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
+
+### Prerequisites
+
+Make sure you have Node.js and npm (or yarn) installed on your machine.
+
+### Installation
+
+1. **Clone the repository:**
+
+   ```bash
+   git clone https://github.com/kbimsara/firebase-Crud.git
+   cd firebase-Crud
+   ```
+
+2. **Install dependencies:**
+
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+
+3. **Set up Firebase Environment Variables:**
+
+   Create a `.env.local` file in the root of your project and add your Firebase configuration. You can get these details from your Firebase project settings.
+
+   ```env
+   NEXT_PUBLIC_FIREBASE_API_KEY=YOUR_API_KEY
+   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=YOUR_AUTH_DOMAIN
+   NEXT_PUBLIC_FIREBASE_PROJECT_ID=YOUR_PROJECT_ID
+   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=YOUR_STORAGE_BUCKET
+   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=YOUR_MESSAGING_SENDER_ID
+   NEXT_PUBLIC_FIREBASE_APP_ID=YOUR_APP_ID
+   NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=YOUR_MEASUREMENT_ID
+   ```
+
+4. **Run the development server:**
+
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+
+   Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
 ##  live version
 
 You can check out the live version of this app right here:
